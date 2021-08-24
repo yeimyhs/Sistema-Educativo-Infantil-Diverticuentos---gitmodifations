@@ -89,37 +89,48 @@ class UserAPI(generics.RetrieveAPIView):
 
       #anotherservices
 
-class searchbyName(APIView):
+class searchbyName(generics.GenericAPIView):
+    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self,request,args):
         queryset = User.objects.filter(username__icontains=args)
         data = UserSerializer(queryset, many=True).data
         return Response(data)
 
-class searchEmail(APIView):
+class searchEmail(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    queryset =''
     def get(self,request,args):
         queryset = User.objects.filter(email__istartswith=args)
         data = UserSerializer(queryset, many=True).data
         return Response(data)
 
-class searchStoryGroup(APIView):
+class searchStoryGroup(generics.GenericAPIView):
+    serializer_class = StorySerializer
+    queryset =''
     def get(self, request, pk, *args, **kwargs):
         queryset = Story.objects.filter(idgroup=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
-class searchStoryUser(APIView):
+class searchStoryUser(generics.GenericAPIView):
+    serializer_class = StorySerializer
+    queryset =''
     def get(self, request, pk, *args, **kwargs):
         queryset = Story.objects.filter(iduser=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
-class searchGroups(APIView):
+class searchGroups(generics.GenericAPIView):
+    serializer_class = UsergroupSerializer
+    queryset =''
     def get(self,request,pk):
         queryset = Usergroup.objects.filter(iduser=pk)
         data = UsergroupSerializer(queryset, many=True).data
         return Response(data)
 
-class searchMembers(APIView):
+class searchMembers(generics.GenericAPIView):
+    serializer_class = UsergroupSerializer
+    queryset =''
     def get(self,request,pk):
         queryset = Usergroup.objects.filter(idgroup=pk)
         data = UsergroupSerializer(queryset, many=True).data
