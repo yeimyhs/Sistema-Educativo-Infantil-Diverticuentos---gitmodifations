@@ -21,6 +21,12 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.http.response import JsonResponse
+#----------------------------------------------------------------------swagger imports
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import api_view
+from drf_yasg import openapi
+#https://drf-yasg.readthedocs.io/en/stable/custom_spec.html
 #----------------------------------------------------------------------token
 class UserObtainAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -63,8 +69,22 @@ class RegisterAPI(generics.GenericAPIView):
         })
 #----------------------------------------------------------------------Login
 class LoginAPI(KnoxLoginView):
+    
     permission_classes = (permissions.AllowAny,)
-
+    '''
+    @swagger_auto_schema(
+        operation_description="apiview post description override",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+        ),
+        security=[],
+        tags=['Users'],
+    )
+    '''
     def post(self, request, format=None):
         print(request)
         serializer = AuthTokenSerializer(data=request.data)
@@ -83,13 +103,14 @@ class LoginAPI(KnoxLoginView):
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = UserSerializer
-
     def get_object(self):
         return self.request.user
 
       #anotherservices
 
 class searchbyName(generics.GenericAPIView):
+    queryset =''
+    """search by Name"""
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self,request,args):
         queryset = User.objects.filter(username__icontains=args)
@@ -97,40 +118,45 @@ class searchbyName(generics.GenericAPIView):
         return Response(data)
 
 class searchEmail(generics.GenericAPIView):
-    serializer_class = UserSerializer
     queryset =''
+    """search by Email"""
+    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self,request,args):
         queryset = User.objects.filter(email__istartswith=args)
         data = UserSerializer(queryset, many=True).data
         return Response(data)
 
 class searchStoryGroup(generics.GenericAPIView):
-    serializer_class = StorySerializer
     queryset =''
+    """story search by group id """
+    @swagger_auto_schema(responses={200: StorySerializer(many=True)})
     def get(self, request, pk, *args, **kwargs):
         queryset = Story.objects.filter(idgroup=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
 class searchStoryUser(generics.GenericAPIView):
-    serializer_class = StorySerializer
     queryset =''
+    """story search by user id """
+    @swagger_auto_schema(responses={200: StorySerializer(many=True)})
     def get(self, request, pk, *args, **kwargs):
         queryset = Story.objects.filter(iduser=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
 class searchGroups(generics.GenericAPIView):
-    serializer_class = UsergroupSerializer
     queryset =''
+    """search for groups by user id"""
+    @swagger_auto_schema(responses={200: UsergroupSerializer(many=True)})
     def get(self,request,pk):
         queryset = Usergroup.objects.filter(iduser=pk)
         data = UsergroupSerializer(queryset, many=True).data
         return Response(data)
 
 class searchMembers(generics.GenericAPIView):
-    serializer_class = UsergroupSerializer
     queryset =''
+    """search for members by group id"""
+    @swagger_auto_schema(responses={200: UsergroupSerializer(many=True)})
     def get(self,request,pk):
         queryset = Usergroup.objects.filter(idgroup=pk)
         data = UsergroupSerializer(queryset, many=True).data

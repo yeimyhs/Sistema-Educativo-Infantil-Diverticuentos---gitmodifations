@@ -11,6 +11,9 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf.urls import include
 
+from rest_framework import status
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Lonccosv3 API",
@@ -23,10 +26,15 @@ schema_view = get_schema_view(
    public=True,
    permission_classes=(permissions.AllowAny,),
 )
+decorated_login_view = \
+   swagger_auto_schema(
+      method='post',
+      responses={status.HTTP_200_OK: AuthTokenSerializer}
+   )(LoginAPI.as_view())
 urlpatterns = [
     
     path('register/', RegisterAPI.as_view(), name='register'),
-    path('login/', LoginAPI.as_view(), name='login'),
+    path('login/', decorated_login_view, name='login'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
     path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),#cuando inicia sesion en varios browser y quiere salir de todos
 
