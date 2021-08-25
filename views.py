@@ -15,6 +15,7 @@ from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from django.contrib.auth import login
+from rest_framework import status
 #----------------------------------------------------------------------token imports
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -71,20 +72,14 @@ class RegisterAPI(generics.GenericAPIView):
 class LoginAPI(KnoxLoginView):
     
     permission_classes = (permissions.AllowAny,)
-    '''
-    @swagger_auto_schema(
-        operation_description="apiview post description override",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['username'],
-            properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING)
-            },
-        ),
-        security=[],
-        tags=['Users'],
-    )
-    '''
+    
+    test_param = openapi.Parameter('test', openapi.IN_QUERY, description="Login", type=openapi.TYPE_BOOLEAN)
+    #user_response = openapi.Response('response description', AuthTokenSerializer)
+    # 'method' can be used to customize a single HTTP method of a view
+    #@swagger_auto_schema(method='get', manual_parameters=[test_param], responses={200: user_response})
+    # 'methods' can be used to apply the same modification to multiple methods
+    @swagger_auto_schema(methods=['post'], request_body=AuthTokenSerializer)
+    @api_view(['POST'])
     def post(self, request, format=None):
         print(request)
         serializer = AuthTokenSerializer(data=request.data)

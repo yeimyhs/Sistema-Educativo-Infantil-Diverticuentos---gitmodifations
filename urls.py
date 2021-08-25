@@ -26,15 +26,17 @@ schema_view = get_schema_view(
    public=True,
    permission_classes=(permissions.AllowAny,),
 )
+'''
 decorated_login_view = \
    swagger_auto_schema(
       method='post',
-      responses={status.HTTP_200_OK: AuthTokenSerializer}
+      request_body={AuthTokenSerializer}
    )(LoginAPI.as_view())
+   '''
 urlpatterns = [
     
     path('register/', RegisterAPI.as_view(), name='register'),
-    path('login/', decorated_login_view, name='login'),
+    path('login/', LoginAPI.as_view(), name='login'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
     path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),#cuando inicia sesion en varios browser y quiere salir de todos
 
