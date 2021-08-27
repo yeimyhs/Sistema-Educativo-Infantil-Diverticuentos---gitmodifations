@@ -1,31 +1,58 @@
 from rest_framework.serializers import ModelSerializer
 from DivertiCuentos.models import Answer, Comment, Dictionary, Examplesdictionay, Group, History, Preference, Readinglist, Story, Suggestion, UserP, Usergroup
+from django.db.models import fields
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
+   # user_profile = UserPSerializer(required=True)
     class Meta:
         model = User
         fields = (
         'id', 
         'username', 
         'email' ,
+        
         )
+
+
+class UserPSerializer(ModelSerializer):
+    class Meta:
+        model = UserP
+        fields = [
+        'id',
+        'username', 
+        'email' ,
+        'firstname',
+        'lastname',
+        'country',
+        'phone',
+        'adress',
+        'city',
+        'state',
+        'datecreation'
+        ]
+
 
 from datetime import datetime
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = (
-        'id', 
-        'username',  
-        'email', 
-        'password',
-        #'last_name'
-        )
+        model = UserP
+        fields = [ 
+        'username', 
+        'email' ,
+        'firstname',
+        'lastname',
+        'country',
+        'phone',
+        'adress',
+        'city',
+        'state',
+        ]
 
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -35,17 +62,23 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['email'], 
             validated_data['password'],
             )
+        user().save()
+
         UserPf= UserP()                              
-        UserPf.iduser = user
-        UserPf.datecreationuser=datetime.now()
-        UserPf.datecreationuser=datetime.now()
+        UserPf.id = user
+        UserPf.username = validated_data['username'],
+        UserPf.email = validated_data['email'], 
+        UserPf.password = validated_data['password'],
+        UserPf.state = validated_data[1],#activo
+        UserPf.datecreation=datetime.now()
+        UserPf.datecreation=datetime.now()
         print(UserPf.datecreationuser)
         UserPf.save()
-        return user
+        return UserPf
 
 
 class AnswerSerializer(ModelSerializer):
-
+    #iduser = UserPSerializer(read_only = True)
     class Meta:
         model = Answer
         fields = '__all__'
@@ -114,15 +147,8 @@ class SuggestionSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class UserPSerializer(ModelSerializer):
-
-    class Meta:
-        model = UserP
-        fields = '__all__'
-
-
 class UsergroupSerializer(ModelSerializer):
-
+    #iduser = UserSerializer()
     class Meta:
         model = Usergroup
         fields = '__all__'

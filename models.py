@@ -151,20 +151,20 @@ class Suggestion(models.Model):
 
 
 class UserP(models.Model):
-    iduser = models.OneToOneField(auth.models.User, on_delete=models.CASCADE,db_column='idUser', primary_key=True)
+    id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE,db_column='idUser', primary_key=True)
     #iduser = models.BigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
-    emailuser = models.CharField(db_column='emailUser', max_length=512)  # Field name made lowercase.
-    passworduser = models.CharField(db_column='passwordUser', max_length=64)  # Field name made lowercase.
-    firstnameuser = models.CharField(db_column='firstnameUser', max_length=128)  # Field name made lowercase.
-    lastnameuser = models.CharField(db_column='lastnameUser', max_length=128, blank=True, null=True)  # Field name made lowercase.
-    imagecoveruser = models.BinaryField(db_column='imageCoverUser', blank=True, null=True)  # Field name made lowercase.
-    countryuser = models.CharField(db_column='countryUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
-    phoneuser = models.IntegerField(db_column='phoneUser', blank=True, null=True)  # Field name made lowercase.
-    usernameuser = models.CharField(db_column='usernameUser', max_length=128)  # Field name made lowercase.
-    adressuser = models.CharField(db_column='adressUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
-    cityuser = models.CharField(db_column='cityUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
-    stateuser = models.IntegerField(db_column='stateUser', blank=True, null=True)  # Field name made lowercase.
-    datecreationuser = models.DateTimeField(db_column='dateCreationUser')  # Field name made lowercase.
+    email = models.CharField(db_column='emailUser', max_length=512)  # Field name made lowercase.
+    password = models.CharField(db_column='passwordUser', max_length=64)  # Field name made lowercase.
+    firstname = models.CharField(db_column='firstnameUser', max_length=128)  # Field name made lowercase.
+    lastname = models.CharField(db_column='lastnameUser', max_length=128, blank=True, null=True)  # Field name made lowercase.
+    imagecover = models.BinaryField(db_column='imageCoverUser', blank=True, null=True)  # Field name made lowercase.
+    country = models.CharField(db_column='countryUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
+    phone = models.IntegerField(db_column='phoneUser', blank=True, null=True)  # Field name made lowercase.
+    username = models.CharField(db_column='usernameUser', max_length=128)  # Field name made lowercase.
+    adress = models.CharField(db_column='adressUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
+    city = models.CharField(db_column='cityUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
+    state = models.IntegerField(db_column='stateUser', blank=True, null=True)  # Field name made lowercase.
+    datecreation = models.DateTimeField(db_column='dateCreationUser',default = 1)  # Field name made lowercase.
 
     class Meta:
         managed = False
