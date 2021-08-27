@@ -97,62 +97,66 @@ class LoginAPI(KnoxLoginView):
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
-    serializer_class = UserSerializer
+    serializer_class = UserPSerializer
     def get_object(self):
-        return self.request.user
+        user = self.request.user
+        queryset = User.objects.filter(username__icontains=user.username)
+        data = UserPSerializer(queryset, many=True).data
+        return Response(data)
 
       #anotherservices
 
 class searchbyName(generics.GenericAPIView):
     queryset =''
-    """search by Name"""
-    @swagger_auto_schema(responses={200: UserSerializer(many=True)})
+    @swagger_auto_schema(responses={200: UserPSerializer(many=True)},)
     def get(self,request,args):
-        queryset = User.objects.filter(username__icontains=args)
-        data = UserSerializer(queryset, many=True).data
+        '''-description: search by Name '''
+        queryset = UserP.objects.filter(username__icontains=args)
+        data = UserPSerializer(queryset, many=True).data
         return Response(data)
 
 class searchEmail(generics.GenericAPIView):
     queryset =''
-    """search by Email"""
     @swagger_auto_schema(responses={200: UserSerializer(many=True)})
     def get(self,request,args):
-        queryset = User.objects.filter(email__istartswith=args)
+        '''search by Email'''
+        queryset = UserP.objects.filter(email__istartswith=args)
         data = UserSerializer(queryset, many=True).data
         return Response(data)
 
 class searchStoryGroup(generics.GenericAPIView):
     queryset =''
-    """story search by group id """
+    
     @swagger_auto_schema(responses={200: StorySerializer(many=True)})
     def get(self, request, pk, *args, **kwargs):
+        '''story search by group id '''
         queryset = Story.objects.filter(idgroup=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
 class searchStoryUser(generics.GenericAPIView):
     queryset =''
-    """story search by user id """
     @swagger_auto_schema(responses={200: StorySerializer(many=True)})
     def get(self, request, pk, *args, **kwargs):
+        '''story search by user id '''
         queryset = Story.objects.filter(iduser=pk)
         data = StorySerializer(queryset, many=True).data
         return Response(data)
 
 class searchGroups(generics.GenericAPIView):
     queryset =''
-    """search for groups by user id"""
     @swagger_auto_schema(responses={200: UsergroupSerializer(many=True)})
     def get(self,request,pk):
+        '''search for groups by user id'''
         queryset = Usergroup.objects.filter(iduser=pk)
         data = UsergroupSerializer(queryset, many=True).data
         return Response(data)
 
 class searchMembers(generics.GenericAPIView):
     queryset =''
-    """search for members by group id"""
     @swagger_auto_schema(responses={200: UsergroupSerializer(many=True)})
     def get(self,request,pk):
+        '''search for members by group id'''
         queryset = Usergroup.objects.filter(idgroup=pk)
         data = UsergroupSerializer(queryset, many=True).data
         return Response(data)
