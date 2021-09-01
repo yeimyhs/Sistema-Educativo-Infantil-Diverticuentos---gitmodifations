@@ -163,15 +163,15 @@ class UserP(models.Model):
     username = models.CharField(db_column='usernameUser', max_length=128)  # Field name made lowercase.
     adress = models.CharField(db_column='adressUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
     city = models.CharField(db_column='cityUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
-    state = models.IntegerField(db_column='stateUser', blank=True, null=True)  # Field name made lowercase.
-    datecreation = models.DateTimeField(db_column='dateCreationUser',default = 1)  # Field name made lowercase.
+    state = models.IntegerField(db_column='stateUser', blank=True, null=True, default = 1)  # Field name made lowercase.
+    datecreation = models.DateTimeField(db_column='dateCreationUser')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'User'
 
     def __str__(self):
-        return f'{self.firstnameuser}'
+        return f'{self.firstname}'
 
 
 class Usergroup(models.Model):

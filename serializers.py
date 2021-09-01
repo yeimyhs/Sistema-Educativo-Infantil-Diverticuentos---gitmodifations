@@ -45,13 +45,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = [ 
         'username', 
         'email' ,
+        'password',
         'firstname',
         'lastname',
         'country',
         'phone',
         'adress',
         'city',
-        'state',
         ]
 
         extra_kwargs = {'password': {'write_only': True}}
@@ -62,19 +62,20 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['email'], 
             validated_data['password'],
             )
-        user().save()
-
         UserPf= UserP()                              
-        UserPf.id = user
-        UserPf.username = validated_data['username'],
-        UserPf.email = validated_data['email'], 
-        UserPf.password = validated_data['password'],
-        UserPf.state = validated_data[1],#activo
+        UserPf.id =user
+        UserPf.username = user.username
+        UserPf.email = user.email
+        UserPf.firstname = validated_data['firstname']
+        UserPf.lastname = validated_data['lastname']
+        UserPf.country = validated_data['country']
+        UserPf.phone = validated_data['phone']
+        UserPf.adress = validated_data['adress']
+        UserPf.city = validated_data['city']
         UserPf.datecreation=datetime.now()
-        UserPf.datecreation=datetime.now()
-        print(UserPf.datecreationuser)
+        print(UserPf.datecreation)
         UserPf.save()
-        return UserPf
+        return user
 
 
 class AnswerSerializer(ModelSerializer):

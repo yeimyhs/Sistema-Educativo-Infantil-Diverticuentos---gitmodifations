@@ -15,7 +15,6 @@ from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from django.contrib.auth import login
-from rest_framework import status
 #----------------------------------------------------------------------token imports
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -29,7 +28,7 @@ from rest_framework.decorators import api_view
 from drf_yasg import openapi
 #https://drf-yasg.readthedocs.io/en/stable/custom_spec.html
 #----------------------------------------------------------------------token
-class UserObtainAuthToken(ObtainAuthToken):
+class UserObtainAuthTokeno(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super(UserObtainAuthToken, self).post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
@@ -72,14 +71,8 @@ class RegisterAPI(generics.GenericAPIView):
 class LoginAPI(KnoxLoginView):
     
     permission_classes = (permissions.AllowAny,)
-    
-    test_param = openapi.Parameter('test', openapi.IN_QUERY, description="Login", type=openapi.TYPE_BOOLEAN)
-    #user_response = openapi.Response('response description', AuthTokenSerializer)
-    # 'method' can be used to customize a single HTTP method of a view
-    #@swagger_auto_schema(method='get', manual_parameters=[test_param], responses={200: user_response})
-    # 'methods' can be used to apply the same modification to multiple methods
-    @swagger_auto_schema(methods=['post'], request_body=AuthTokenSerializer)
-    @api_view(['POST'])
+    @swagger_auto_schema( request_body=AuthTokenSerializer)
+
     def post(self, request, format=None):
         print(request)
         serializer = AuthTokenSerializer(data=request.data)
@@ -99,10 +92,15 @@ class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = UserPSerializer
     def get_object(self):
-        user = self.request.user
-        queryset = User.objects.filter(username__icontains=user.username)
-        data = UserPSerializer(queryset, many=True).data
-        return Response(data)
+        try :
+            user = self.request.user
+            queryset = UserP.objects.get(id=user.id)
+            print(user.id)
+            data = UserPSerializer(queryset, many=False).data
+            return Response(data)
+        except:
+            return Response({'error': 'No se ha encontrado'})
+
 
       #anotherservices
 
