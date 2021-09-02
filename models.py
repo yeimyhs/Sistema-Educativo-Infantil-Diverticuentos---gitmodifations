@@ -150,14 +150,14 @@ class Suggestion(models.Model):
         db_table = 'Suggestion'
 
 
-class UserP(models.Model):
-    id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE,db_column='idUser', primary_key=True)
-    #iduser = models.BigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
+class UserProf(models.Model):
+    #id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE,db_column='idUser', primary_key=True)
+    iduser = models.BigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
     email = models.CharField(db_column='emailUser', max_length=512)  # Field name made lowercase.
     password = models.CharField(db_column='passwordUser', max_length=64)  # Field name made lowercase.
     firstname = models.CharField(db_column='firstnameUser', max_length=128)  # Field name made lowercase.
     lastname = models.CharField(db_column='lastnameUser', max_length=128, blank=True, null=True)  # Field name made lowercase.
-    imagecover = models.BinaryField(db_column='imageCoverUser', blank=True, null=True)  # Field name made lowercase.
+    imagecover = models.ImageField(upload_to='image/',db_column='imageCoverUser', blank=True, null=True)  # Field name made lowercase.
     country = models.CharField(db_column='countryUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
     phone = models.IntegerField(db_column='phoneUser', blank=True, null=True)  # Field name made lowercase.
     username = models.CharField(db_column='usernameUser', max_length=128)  # Field name made lowercase.
@@ -166,9 +166,24 @@ class UserP(models.Model):
     state = models.IntegerField(db_column='stateUser', blank=True, null=True, default = 1)  # Field name made lowercase.
     datecreation = models.DateTimeField(db_column='dateCreationUser')  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'User'
+    def __str__(self):
+        return f'{self.firstname}'
+
+class UserP(models.Model):
+    id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE, primary_key=True)
+    #iduser = models.sBigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
+    email = models.CharField( max_length=512)  # Field name made lowercase.
+    password = models.CharField( max_length=64)  # Field name made lowercase.
+    firstname = models.CharField(max_length=128)  # Field name made lowercase.
+    lastname = models.CharField(max_length=128, blank=True, null=True)  # Field name made lowercase.
+    imagecover = models.ImageField(upload_to='image/', blank=True, null=True)  # Field name made lowercase.
+    country = models.CharField(max_length=512, blank=True, null=True)  # Field name made lowercase.
+    phone = models.IntegerField(blank=True, null=True)  # Field name made lowercase.
+    username = models.CharField(max_length=128)  # Field name made lowercase.
+    adress = models.CharField(max_length=512, blank=True, null=True)  # Field name made lowercase.
+    city = models.CharField(max_length=512, blank=True, null=True)  # Field name made lowercase.
+    state = models.IntegerField(blank=True, null=True, default = 1)  # Field name made lowercase.
+    datecreation = models.DateTimeField()  # Field name made lowercase.
 
     def __str__(self):
         return f'{self.firstname}'
