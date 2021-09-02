@@ -94,10 +94,8 @@ class UserAPI(generics.RetrieveAPIView):
     def get_object(self):
         try :
             user = self.request.user
-            queryset = UserP.objects.get(id=user.id)
-            print(user.id)
-            data = UserPSerializer(queryset, many=False).data
-            return Response(data)
+            queryset = UserP.objects.filter(id=user.id).first()
+            return queryset
         except:
             return Response({'error': 'No se ha encontrado'})
 
