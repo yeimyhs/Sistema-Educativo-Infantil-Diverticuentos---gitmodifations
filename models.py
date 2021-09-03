@@ -172,7 +172,8 @@ class UserProf(models.Model):
 class UserP(models.Model):
     id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE, primary_key=True)
     #iduser = models.sBigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
-    email = models.CharField( max_length=512)  # Field name made lowercase. # Field name made lowercase.
+    email = models.CharField( max_length=512)  # Field name made lowercase.
+    password = models.CharField( max_length=64, blank=True, null=True)  # Field name made lowercase.
     firstname = models.CharField(max_length=128)  # Field name made lowercase.
     lastname = models.CharField(max_length=128, blank=True, null=True)  # Field name made lowercase.
     imagecover = models.ImageField(upload_to='image/', blank=True, null=True)  # Field name made lowercase.
