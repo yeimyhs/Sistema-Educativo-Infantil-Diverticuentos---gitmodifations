@@ -74,7 +74,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         UserPf.phone = validated_data['phone']
         UserPf.adress = validated_data['adress']
         UserPf.city = validated_data['city']
-        UserPf.city = validated_data['imagecover']
+        UserPf.imagecover = validated_data['imagecover']
         UserPf.datecreation=datetime.now()
         print(UserPf.datecreation)
         UserPf.save()
