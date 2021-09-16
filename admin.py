@@ -4,6 +4,15 @@ from django.contrib import admin
 from .models import *
 #admin.site.register(Usuario)
 admin.site.register(UserP)
-#admin.site.register(Cuento)
-#admin.site.register(Comentarios)
-#admin.site.register(UsuarioGrupos)
+admin.site.register(Answer)
+admin.site.register(Comment)
+admin.site.register(Dictionary)
+admin.site.register(Examplesdictionay)
+admin.site.register(Group)
+admin.site.register(History)
+admin.site.register(Preference)
+admin.site.register(Readinglist)
+admin.site.register(Story)
+admin.site.register(Suggestion)
+admin.site.register(Usergroup)
+
