@@ -4,12 +4,17 @@ from DivertiCuentos import views
 from knox import views as knox_views
 #from .views import LoginAPI
 from .views import *
-from django.urls import path , re_path
+from django.urls import path , re_path, reverse
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from django.conf.urls import include
+from django.conf.urls import url, include
+#from django.contrib.auth.views import password_reset, password_reset_done, password_reset_complete, password_reset_confirm
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.urls import reverse_lazy
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views
 
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -32,7 +37,8 @@ decorated_logout_view = \
       'Authorization :: header for token authentication'
       #request_body={AuthTokenSerializer}
    )(knox_views.LogoutView.as_view())
-   
+app_name = 'DivertiCuentos'  
+#https://www.ordinarycoders.com/blog/article/django-password-reset reset password
 urlpatterns = [
     
     path('register/', RegisterAPI.as_view(), name='register'),
@@ -40,6 +46,13 @@ urlpatterns = [
     path('logout/',decorated_logout_view, name='logout'),
     path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),#cuando inicia sesion en varios browser y quiere salir de todos
 
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
+       template_name='resetAccount/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+       template_name="resetAccount/password_reset_confirm.html"), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
+       template_name='resetAccount/password_reset_complete.html'), name='password_reset_complete'),      
+    path("password_reset", views.password_reset_request, name="password_reset"),
 
     path('searchbyName/<str:args>/', searchbyName.as_view()),
     path('searchEmail/<str:args>/', searchEmail.as_view()),
@@ -47,12 +60,15 @@ urlpatterns = [
     path('searchStoryUser/<int:pk>/', searchStoryUser.as_view()),
     path('searchGroups/<int:pk>/', searchGroups.as_view()),
     path('searchMembers/<int:pk>/', searchMembers.as_view()),
+    path('mailer/', mailer.as_view()),
 
     path('userbyToken/', UserAPI.as_view()),
 
     re_path(r'^swagger(<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+
 ]
 router = SimpleRouter()
 

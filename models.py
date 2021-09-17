@@ -150,7 +150,7 @@ class Suggestion(models.Model):
         db_table = 'Suggestion'
 
 
-class UserProf(models.Model):
+class UserProf(models.Model):##inservible
     #id = models.OneToOneField(auth.models.User,related_name='user_profile', on_delete=models.CASCADE,db_column='idUser', primary_key=True)
     iduser = models.BigAutoField(db_column='idUser', primary_key=True)  # Field name made lowercase.
     email = models.CharField(db_column='emailUser', max_length=512)  # Field name made lowercase.
@@ -165,7 +165,7 @@ class UserProf(models.Model):
     city = models.CharField(db_column='cityUser', max_length=512, blank=True, null=True)  # Field name made lowercase.
     state = models.IntegerField(db_column='stateUser', blank=True, null=True, default = 1)  # Field name made lowercase.
     datecreation = models.DateTimeField(db_column='dateCreationUser')  # Field name made lowercase.
-
+##crear carpetas personalizar nombre del archivo
     def __str__(self):
         return f'{self.firstname}'
 
