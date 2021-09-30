@@ -90,7 +90,7 @@ class LoginAPI(KnoxLoginView):
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
-    serializer_class = UserPSerializer
+    serializer_class = UserSerializer
     def get_object(self):
         try :
             user = self.request.user
@@ -189,6 +189,7 @@ from django.db.models.query_utils import Q
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
+from django.contrib import messages
 #----------------------------------------------------------------------password reset
 def password_reset_request(request):
 	if request.method == "POST":
@@ -199,7 +200,7 @@ def password_reset_request(request):
 			if associated_users.exists():
 				for user in associated_users:
 					subject = "Password Reset Requested"
-					email_template_name = "resetAccount/password_reset_email.txt"
+					email_template_name = "password_reset/password_reset_email.txt"
 					c = {
 					"email":user.email,
 					'domain':settings.DOMAIN,
@@ -214,9 +215,10 @@ def password_reset_request(request):
 						send_mail(subject, email, settings.EMAIL_HOST_USER , [user.email], fail_silently=False)
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
-					return redirect ("./password_reset/done/")
+                    
+					return redirect ("/diverticuentos/password_reset/done/")
 	password_reset_form = PasswordResetForm()
-	return render(request=request, template_name="resetAccount/password_reset.html", context={"password_reset_form":password_reset_form})
+	return render(request=request, template_name="password_reset/password_reset.html", context={"password_reset_form":password_reset_form})
 #----------------------------------------------------------------------generate
 class AnswerViewSet(ModelViewSet):
     queryset = Answer.objects.order_by('pk')
@@ -276,3 +278,45 @@ class UserPViewSet(ModelViewSet):
 class UsergroupViewSet(ModelViewSet):
     queryset = Usergroup.objects.order_by('pk')
     serializer_class = UsergroupSerializer
+
+
+#----------------------------------------------------------------------notifications imports
+from django.http.response import HttpResponse
+from django.views.decorators.http import require_GET
+
+from django.http.response import JsonResponse, HttpResponse
+from django.views.decorators.http import require_GET, require_POST
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
+import json
+
+from django.conf import settings
+#----------------------------------------------------------------------notifications
+@require_GET#solicitudes get
+def home(request):
+    #return HttpResponse('<h1>Home Page<h1>')
+    webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+    vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
+    user = request.user
+    return render(request,'home.html', {user: user, 'vapid_key': vapid_key})
+
+@require_POST
+@csrf_exempt##es recomendable quitar en produccion el exento de csrf para evitar falsificaciones
+def send_push(request):
+    try:
+        body = request.body
+        data = json.loads(body)
+
+        if 'head' not in data or 'body' not in data or 'id' not in data:
+            return JsonResponse(status=400, data={"message": "Invalid data format"})
+
+        user_id = data['id']
+        user = get_object_or_404(User, pk=user_id)
+        payload = {'head': data['head'], 'body': data['body']}
+        send_user_notification(user=user, payload=payload, ttl=1000)
+
+        return JsonResponse(status=200, data={"message": "Web push successful"})
+    except TypeError:
+        return JsonResponse(status=500, data={"message": "An error occurred"})
