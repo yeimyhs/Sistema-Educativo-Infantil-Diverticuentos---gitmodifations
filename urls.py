@@ -11,13 +11,17 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf.urls import url, include
 #from django.contrib.auth.views import password_reset, password_reset_done, password_reset_complete, password_reset_confirm
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import views as auth_views
 
+from django.views.generic import TemplateView
+
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from django.conf import settings
+from django.conf.urls.static import static
+from .views import home, send_push
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -37,7 +41,7 @@ decorated_logout_view = \
       'Authorization :: header for token authentication'
       #request_body={AuthTokenSerializer}
    )(knox_views.LogoutView.as_view())
-app_name = 'DivertiCuentos'  
+#app_name = 'DivertiCuentos'  
 #https://www.ordinarycoders.com/blog/article/django-password-reset reset password
 urlpatterns = [
     
@@ -46,13 +50,18 @@ urlpatterns = [
     path('logout/',decorated_logout_view, name='logout'),
     path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),#cuando inicia sesion en varios browser y quiere salir de todos
 
+    path("password_reset/", views.password_reset_request, name="password_reset"),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-       template_name='resetAccount/password_reset_done.html'), name='password_reset_done'),
+       template_name='password_reset/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-       template_name="resetAccount/password_reset_confirm.html"), name='password_reset_confirm'),
+       template_name="password_reset/password_reset_confirm.html"), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-       template_name='resetAccount/password_reset_complete.html'), name='password_reset_complete'),      
-    path("password_reset", views.password_reset_request, name="password_reset"),
+       template_name='password_reset/password_reset_complete.html'), name='password_reset_complete'),      
+    
+
+   path('s', home),
+   path('send_push', send_push),
+   path('webpush/', include('webpush.urls')),
 
     path('searchbyName/<str:args>/', searchbyName.as_view()),
     path('searchEmail/<str:args>/', searchEmail.as_view()),
@@ -68,8 +77,10 @@ urlpatterns = [
     path('swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
+   path('sw.js', TemplateView.as_view(template_name='./sw.js', content_type='application/x-javascript')),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 router = SimpleRouter()
 
 router.register(r'answer', views.AnswerViewSet)
@@ -86,3 +97,7 @@ router.register(r'userp', views.UserPViewSet)
 router.register(r'usergroup', views.UsergroupViewSet)
 
 urlpatterns += router.urls
+
+
+'''search   re_path(r'^password_reset_complete/$', auth_views.PasswordResetCompleteView.as_view(
+       template_name='resetAccount/password_reset_complete.html'), name='password_reset_complete'),     '''
